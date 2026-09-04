@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FARIA — Uso do Vidro</title>
+<meta name="robots" content="noindex,nofollow">
+<style>
+  @font-face{font-family:"Anthropic Sans";src:url("https://oyubhimyeycfvbhpnqwk.supabase.co/storage/v1/object/public/assets/fonts/text-regular.otf") format("opentype");font-weight:400;font-display:swap}
+  @font-face{font-family:"Anthropic Sans";src:url("https://oyubhimyeycfvbhpnqwk.supabase.co/storage/v1/object/public/assets/fonts/text-semibold.otf") format("opentype");font-weight:600;font-display:swap}
+  @font-face{font-family:"Anthropic Sans Display";src:url("https://oyubhimyeycfvbhpnqwk.supabase.co/storage/v1/object/public/assets/fonts/display-bold.otf") format("opentype");font-weight:700;font-display:swap}
+  :root{
+    --grafite:#171C1A;--papel:#FAFAFA;--lima:#C6F135;--violeta:#8E71FF;--magenta:#F472B6;
+    --bg2:#1F2523;--bg3:#262D2A;--line:#2C3431;--line2:#3A423E;--t2:#A8B2AD;--t3:#6E7873;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--grafite);color:var(--papel);
+    font-family:"Anthropic Sans",-apple-system,"Segoe UI",Roboto,sans-serif;font-size:15px;
+    padding:18px 16px calc(28px + env(safe-area-inset-bottom));max-width:1080px;margin:0 auto}
+  header{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+  header .logo{width:32px;height:32px;flex:0 0 auto}
+  header .tit b{font-size:1rem;display:block}
+  header .tit span{font-size:.62rem;color:var(--t3);text-transform:uppercase;letter-spacing:.12em}
+  header a{margin-left:auto;color:var(--t2);font-size:.74rem;text-decoration:none;
+    border:1px solid var(--line2);border-radius:999px;padding:6px 12px}
+  header a:hover{color:var(--papel);border-color:var(--t3)}
+
+  #gate{background:var(--bg2);border:1px solid var(--line2);border-radius:14px;padding:22px;
+    display:flex;flex-direction:column;gap:12px;align-items:center;text-align:center;max-width:380px;margin:60px auto}
+  #gate p{margin:0;color:var(--t2);font-size:.88rem;line-height:1.5}
+  #gate input{background:var(--grafite);border:1px solid var(--line2);border-radius:999px;color:var(--papel);
+    font:inherit;text-align:center;padding:10px 18px;width:100%}
+  #gate input:focus{outline:none;border-color:var(--lima)}
+  #gate button{border:none;background:var(--lima);color:var(--grafite);font:inherit;font-weight:700;
+    padding:10px 28px;border-radius:999px;cursor:pointer}
+  #gate .erro{color:var(--magenta);font-size:.78rem;min-height:1em;margin:0}
+  #painel{display:none}
+
+  h2{font-size:.66rem;text-transform:uppercase;letter-spacing:.14em;color:var(--t3);margin:22px 0 10px;font-weight:600}
+  .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+  .tile{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .tile .n{font-family:"Anthropic Sans Display","Anthropic Sans",sans-serif;font-weight:700;
+    font-size:1.9rem;line-height:1.1;font-variant-numeric:tabular-nums}
+  .tile .l{font-size:.7rem;color:var(--t2);margin-top:3px}
+  .tile .s{font-size:.66rem;color:var(--t3);font-variant-numeric:tabular-nums}
+
+  .card{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+  .grafico{position:relative}
+  .grafico svg{display:block;width:100%;height:150px}
+  .barra{fill:var(--lima)}
+  .barra:hover{fill:var(--papel)}
+  .eixo-dia{font-size:9px;fill:var(--t3);font-family:inherit}
+  .rotulo-max{font-size:10px;fill:var(--t2);font-variant-numeric:tabular-nums}
+  #tip{position:absolute;pointer-events:none;background:var(--grafite);border:1px solid var(--line2);
+    border-radius:8px;padding:6px 10px;font-size:.72rem;color:var(--papel);display:none;white-space:nowrap;
+    box-shadow:0 4px 14px rgba(0,0,0,.4);z-index:5;font-variant-numeric:tabular-nums}
+  #tip b{color:var(--lima)}
+
+  .rolagem{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;font-size:.82rem;font-variant-numeric:tabular-nums}
+  th{font-size:.62rem;text-transform:uppercase;letter-spacing:.08em;color:var(--t3);text-align:left;
+    padding:6px 10px;border-bottom:1px solid var(--line2);font-weight:600;white-space:nowrap}
+  td{padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+  tr:last-child td{border-bottom:none}
+  td.num,th.num{text-align:right}
+  .nome-forte{font-weight:600}
+  .semnome{color:var(--t3);font-style:italic}
+  .chip{display:inline-block;font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;
+    padding:1px 8px;border-radius:999px;background:var(--bg3);color:var(--t2)}
+  .chip.lima{background:rgba(198,241,53,.16);color:var(--lima)}
+  .chip.mag{background:rgba(244,114,182,.16);color:var(--magenta)}
+  .chip.vio{background:rgba(142,113,255,.18);color:var(--violeta)}
+  .vazio{color:var(--t3);font-size:.8rem;padding:8px 2px}
+  .fb-item{border-bottom:1px solid var(--line);padding:9px 2px;font-size:.82rem}
+  .fb-item:last-child{border-bottom:none}
+  .fb-item .m{color:var(--t3);font-size:.68rem;margin-top:2px}
+  .rodape{color:var(--t3);font-size:.66rem;margin-top:26px;line-height:1.6;border-top:1px solid var(--line);padding-top:10px}
+  @media (prefers-reduced-motion: no-preference){ .barra{transition:fill .12s ease} }
+</style>
+</head>
+<body>
+  <header>
+    <div class="logo"><svg viewBox="0 0 336.57 332.8" style="width:100%;height:100%" aria-hidden="true">
+      <path fill="var(--papel)" d="M336.3,166.39c-5.28,94.08-63.56,154.29-156.35,165.45C88.32,342.86,18.23,257.25,2.11,166.39-14.06,75.23,64.77,7.55,165.32.49c108.05-7.59,176.15,73.76,170.98,165.9Z"/>
+      <path fill="var(--grafite)" d="M108.01,155.34v-23.99h57.14l-8.2-21.88h-72.81v113.54h23.87v-45.72h43.02l-.1-.26-8.12-21.69h-34.8Z"/>
+      <path fill="var(--grafite)" d="M201.71,109.47h-24.77l12.11,28.45.03-.09,16.01,37.69h-.04l20.36,47.81h27.02l-50.72-113.85Z"/>
+    </svg></div>
+    <div class="tit"><b>Uso do Vidro</b><span>quem treinou o agente · atualiza sozinho</span></div>
+    <a href="./">← voltar pro vidro</a>
+  </header>
+
+  <div id="gate">
+    <p><b style="color:var(--papel)">Painel de uso</b> do Cérebro de Vidro. Digita o código do time pra abrir.</p>
+    <input id="gCod" placeholder="código do time" autocomplete="off">
+    <p class="erro" id="gErro"></p>
+    <button id="gBtn">Abrir</button>
+  </div>
+
+  <div id="painel">
+    <div class="tiles" id="tiles"></div>
+
+    <h2>Mensagens enviadas por dia (14 dias)</h2>
+    <div class="card grafico">
+      <svg id="svgDias" preserveAspectRatio="none"></svg>
+      <div id="tip"></div>
+      <div class="vazio" id="diasVazio" style="display:none">sem movimento ainda</div>
+    </div>
+
+    <h2>Por pessoa</h2>
+    <div class="card rolagem">
+      <table id="tbPessoas">
+        <thead><tr><th>quem</th><th class="num">conversas</th><th class="num">mensagens</th><th class="num">👍 dados</th><th class="num">👎 dados</th><th>última vez</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <div class="vazio" id="pessoasVazio" style="display:none">ninguém entrou ainda</div>
+    </div>
+
+    <h2>Conversas recentes</h2>
+    <div class="card rolagem">
+      <table id="tbConversas">
+        <thead><tr><th>quem</th><th>quando</th><th>situação</th><th class="num">msgs</th><th>score</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <h2>Comentários do time (👎 com texto)</h2>
+    <div class="card" id="fbLista"><div class="vazio">nenhum comentário ainda. Cada 👎 com comentário vira melhoria no agente.</div></div>
+
+    <p class="rodape">Conversas anteriores a 18/08 aparecem como <i>sem nome</i> (o portão ainda não pedia o nome).
+      Dados direto do banco de auditoria do agente. <b style="color:var(--t2)">FARIA</b> · Grupo Faria.</p>
+  </div>
+
+<script>
+(function () {
+  var BASE = "https://disturbed-therapist-stability-question.trycloudflare.com/webhook";
+  var token = localStorage.getItem("vidro_token") || "";
+  var dados = null;
+
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { var d = document.createElement("div"); d.textContent = s == null ? "" : String(s); return d.innerHTML; }
+
+  function busca(t, ok, falha) {
+    fetch(BASE + "/sim-uso?token=" + encodeURIComponent(t))
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        var u = j.uso || j;
+        if (u && u.erro === "token") { falha("código incorreto"); return; }
+        ok(u);
+      })
+      .catch(function () { falha("O laboratório está offline no momento."); });
+  }
+
+  function entra() {
+    var t = $("gCod").value.trim();
+    if (!t) return;
+    busca(t, function (u) {
+      token = t; localStorage.setItem("vidro_token", t);
+      dados = u; $("gate").style.display = "none"; $("painel").style.display = "block";
+      pinta(); setInterval(atualiza, 30000);
+    }, function (msg) { $("gErro").textContent = msg; });
+  }
+  $("gBtn").addEventListener("click", entra);
+  $("gCod").addEventListener("keydown", function (e) { if (e.key === "Enter") entra(); });
+
+  function atualiza() {
+    busca(token, function (u) { dados = u; pinta(); }, function () {});
+  }
+  if (token) { $("gCod").value = token; entra(); }
+
+  function tile(n, l, sufixo) {
+    return "<div class='tile'><div class='n'>" + n + "</div><div class='l'>" + l + (sufixo ? " <span class='s'>" + sufixo + "</span>" : "") + "</div></div>";
+  }
+
+  function pinta() {
+    var u = dados || {};
+    var t = u.totais || {};
+    $("tiles").innerHTML =
+      tile(t.conversas || 0, "conversas") +
+      tile(t.mensagens || 0, "mensagens do time") +
+      tile(t.pessoas || 0, "pessoas identificadas") +
+      tile((t.votos_bom || 0) + " / " + (t.votos_ruim || 0), "votos 👍 / 👎") +
+      tile("US$ " + Number(t.custo_usd || 0).toFixed(2), "custo total de IA");
+
+    var dias = u.por_dia || [];
+    var svg = $("svgDias");
+    $("diasVazio").style.display = dias.length ? "none" : "block";
+    svg.style.display = dias.length ? "block" : "none";
+    if (dias.length) {
+      var W = 1000, H = 150, PAD_B = 18, PAD_T = 16;
+      var max = 0, i;
+      for (i = 0; i < dias.length; i++) max = Math.max(max, Number(dias[i].mensagens || 0));
+      if (max === 0) max = 1;
+      var n = dias.length, gap = 2;
+      var bw = Math.min(56, (W - gap * (n - 1)) / n);
+      var total = bw * n + gap * (n - 1);
+      var x0 = (W - total) / 2;
+      var html = "";
+      html += "<line x1='0' y1='" + (H - PAD_B) + "' x2='" + W + "' y2='" + (H - PAD_B) + "' stroke='var(--line2)' stroke-width='1'/>";
+      for (i = 0; i < n; i++) {
+        var d = dias[i];
+        var v = Number(d.mensagens || 0);
+        var h = Math.round((H - PAD_B - PAD_T) * v / max);
+        if (v > 0 && h < 3) h = 3;
+        var x = x0 + i * (bw + gap), y = H - PAD_B - h;
+        var r = Math.min(4, bw / 2, h);
+        var p = "M" + x + "," + (H - PAD_B) + " L" + x + "," + (y + r) + " Q" + x + "," + y + " " + (x + r) + "," + y +
+                " L" + (x + bw - r) + "," + y + " Q" + (x + bw) + "," + y + " " + (x + bw) + "," + (y + r) +
+                " L" + (x + bw) + "," + (H - PAD_B) + " Z";
+        html += "<path class='barra' d='" + p + "' data-dia='" + esc(d.dia) + "' data-m='" + v + "' data-c='" + esc(d.conversas) + "'></path>";
+        if (v === max) html += "<text class='rotulo-max' x='" + (x + bw / 2) + "' y='" + (y - 4) + "' text-anchor='middle'>" + v + "</text>";
+        html += "<text class='eixo-dia' x='" + (x + bw / 2) + "' y='" + (H - 5) + "' text-anchor='middle'>" + esc(d.dia) + "</text>";
+      }
+      svg.setAttribute("viewBox", "0 0 " + W + " " + H);
+      svg.innerHTML = html;
+      var tip = $("tip");
+      svg.onmousemove = function (ev) {
+        var el = ev.target;
+        if (el && el.classList && el.classList.contains("barra")) {
+          tip.innerHTML = el.getAttribute("data-dia") + " · <b>" + el.getAttribute("data-m") + "</b> mensagens · " + el.getAttribute("data-c") + " conversa(s)";
+          tip.style.display = "block";
+          var box = svg.parentNode.getBoundingClientRect();
+          var tx = ev.clientX - box.left + 12, ty = ev.clientY - box.top - 34;
+          if (tx + tip.offsetWidth > box.width - 8) tx = tx - tip.offsetWidth - 24;
+          tip.style.left = tx + "px"; tip.style.top = ty + "px";
+        } else { tip.style.display = "none"; }
+      };
+      svg.onmouseleave = function () { tip.style.display = "none"; };
+    }
+
+    var votos = {};
+    (u.votos_por_usuario || []).forEach(function (v) { votos[v.usuario] = v; });
+    var ps = u.por_usuario || [];
+    var tb = $("tbPessoas").querySelector("tbody");
+    tb.innerHTML = "";
+    $("pessoasVazio").style.display = ps.length ? "none" : "block";
+    ps.forEach(function (p) {
+      var v = votos[p.usuario] || {};
+      var semNome = p.usuario === "sem nome";
+      var tr = document.createElement("tr");
+      tr.innerHTML = "<td class='" + (semNome ? "semnome" : "nome-forte") + "'>" + esc(p.usuario) + "</td>" +
+        "<td class='num'>" + (p.conversas || 0) + "</td>" +
+        "<td class='num'>" + (p.mensagens || 0) + "</td>" +
+        "<td class='num'>" + (v.bom || 0) + "</td>" +
+        "<td class='num'>" + (v.ruim || 0) + "</td>" +
+        "<td>" + esc(p.ultima || "") + "</td>";
+      tb.appendChild(tr);
+    });
+
+    var TIERS = { A: ["A · analisar JÁ", "mag"], B: ["B · quente", "lima"], C: ["C · fila", ""], D: ["D · downsell", "vio"], E: ["E · desqualif.", ""] };
+    var cs = u.conversas || [];
+    var tc = $("tbConversas").querySelector("tbody");
+    tc.innerHTML = "";
+    cs.forEach(function (c) {
+      var tinfo = TIERS[c.tier] || [c.tier || "", ""];
+      var semNome = c.usuario === "sem nome";
+      var tr = document.createElement("tr");
+      tr.innerHTML = "<td class='" + (semNome ? "semnome" : "nome-forte") + "'>" + esc(c.usuario) + "</td>" +
+        "<td>" + esc(c.inicio) + "</td>" +
+        "<td>" + esc(c.situacao || "em triagem") + "</td>" +
+        "<td class='num'>" + (Number(c.msgs_lead || 0) + Number(c.msgs_bot || 0)) + "</td>" +
+        "<td>" + (c.tier ? "<span class='chip " + tinfo[1] + "'>" + esc(tinfo[0]) + "</span>" : "") + "</td>";
+      tc.appendChild(tr);
+    });
+
+    var fs = u.feedbacks || [];
+    var fb = $("fbLista");
+    if (!fs.length) {
+      fb.innerHTML = "<div class='vazio'>nenhum comentário ainda. Cada 👎 com comentário vira melhoria no agente.</div>";
+    } else {
+      fb.innerHTML = "";
+      fs.forEach(function (f) {
+        var div = document.createElement("div");
+        div.className = "fb-item";
+        div.innerHTML = (f.voto === "ruim" ? "👎 " : "👍 ") + esc(f.comentario) +
+          "<div class='m'>" + esc(f.usuario) + " · " + esc(f.hora) + "</div>";
+        fb.appendChild(div);
+      });
+    }
+  }
+})();
+</script>
+</body>
+</html>
