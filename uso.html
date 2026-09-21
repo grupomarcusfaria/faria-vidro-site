@@ -132,7 +132,13 @@
 
 <script>
 (function () {
-  var BASE = "https://established-lifetime-house-resolution.trycloudflare.com/webhook";
+  var BASE = "https://discs-still-fascinating-universal.trycloudflare.com/webhook"; // fallback: só vale se o Supabase não responder
+  // 21/09: o túnel do n8n é efêmero e muda sozinho; o vigia publica a URL atual no Supabase (far_tunel) e a página lê aqui.
+  var BASE_PRONTA = fetch("https://oyubhimyeycfvbhpnqwk.supabase.co/rest/v1/rpc/far_tunel", { method: "POST", headers: { apikey: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95dWJoaW15ZXljZnZiaHBucXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3MzIzNDgsImV4cCI6MjEwMDMwODM0OH0.JdopYvvG5zyDCpt2OhEUG-ad1rSaA8DGUTMr3P6vA2g", Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95dWJoaW15ZXljZnZiaHBucXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ3MzIzNDgsImV4cCI6MjEwMDMwODM0OH0.JdopYvvG5zyDCpt2OhEUG-ad1rSaA8DGUTMr3P6vA2g", "Content-Type": "application/json" }, body: "{}" })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (u) { if (typeof u === "string" && /^https:\/\/[a-z0-9-]+\.trycloudflare\.com$/.test(u)) BASE = u + "/webhook"; })
+    .catch(function () {});
+  function api(caminho, opcoes) { return BASE_PRONTA.then(function () { return window.fetch(BASE + caminho, opcoes); }); }
   var token = localStorage.getItem("vidro_token") || "";
   var dados = null;
 
@@ -140,7 +146,7 @@
   function esc(s) { var d = document.createElement("div"); d.textContent = s == null ? "" : String(s); return d.innerHTML; }
 
   function busca(t, ok, falha) {
-    fetch(BASE + "/sim-uso?token=" + encodeURIComponent(t))
+    api("/sim-uso?token=" + encodeURIComponent(t))
       .then(function (r) { return r.json(); })
       .then(function (j) {
         var u = j.uso || j;
